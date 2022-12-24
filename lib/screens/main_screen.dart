@@ -1,8 +1,4 @@
-// write a program to display a catalogue of products with either a video or an image and a description of the product in a horizontal list view
-//product video and description should change when you swipe left or right
-//the video should play automatically when you swipe to it
-//the video should stop playing when you swipe away from it
-//the video should play again when you swipe back to it
+
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
