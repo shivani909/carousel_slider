@@ -134,7 +134,7 @@ class _CatalogueState extends State<Catalogue> with TickerProviderStateMixin {
   }
 }
 
-// Define a product class that contains a name and a video URL
+
 class Product {
   final String name;
   final String videoUrl;
