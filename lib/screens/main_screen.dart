@@ -1,8 +1,8 @@
-
-
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:show_up_animation/show_up_animation.dart';
 
 class Catalogue extends StatefulWidget {
   @override
@@ -30,16 +30,17 @@ class _CatalogueState extends State<Catalogue> with TickerProviderStateMixin {
         videoUrl:
             "https://assets.mixkit.co/videos/preview/mixkit-portrait-of-a-fashion-cyborg-woman-40205-large.mp4"),
   ];
-  bool _visible = true;
+
+  final ScrollController _scrollController = ScrollController();
   late VideoPlayerController _controller0;
   late VideoPlayerController _controller1;
   late VideoPlayerController _controller2;
   String text = '';
   String description = '';
   List _controllers = [];
-  late AnimationController animation;
-  late Animation<double> _fadeInFadeOut;
-
+  late AnimationController animationController;
+  late Animation<TextStyle> animation;
+  final Tween<double> _fontSizeTween = Tween(begin: 16.0, end: 32.0);
   @override
   void initState() {
     _controller0 = VideoPlayerController.network(_products[0].videoUrl)
@@ -54,7 +55,34 @@ class _CatalogueState extends State<Catalogue> with TickerProviderStateMixin {
 
     setState(() {});
 
+    animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1000));
+
+    animation = TextStyleTween(
+      begin: const TextStyle(
+        fontSize: 16,
+        color: Colors.black,
+        fontWeight: FontWeight.bold,
+      ),
+      end: const TextStyle(
+        fontSize: 32,
+        color: Colors.black,
+        fontWeight: FontWeight.bold,
+      ),
+    ).animate(animationController);
+
+    animation.addListener(() {
+      setState(() {});
+    });
+    animationController.forward();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -100,25 +128,20 @@ class _CatalogueState extends State<Catalogue> with TickerProviderStateMixin {
                     padding: const EdgeInsets.all(8.0),
                     child: VideoPlayer(_controllers[index]),
                   )),
-                  ListView(
-                    
-                    shrinkWrap: true,
-                    children: [
-                      AnimatedSwitcher(
-                          child: ListTile(
-                            title: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 10),
-                                child: Text(text)),
-                            subtitle: Text(description),
-                          ),
-                          duration: Duration(milliseconds: 500),
-                          transitionBuilder:
-                              (Widget child, Animation<double> animation) {
-                            return ScaleTransition(
-                                scale: animation, child: child);
-                          })
-                    ],
-                  ),
+                  ShowUpAnimation(
+                      delayStart: Duration(milliseconds: 500),
+                      animationDuration: Duration(milliseconds: 500),
+                      curve: Curves.easeInSine,
+                      direction: Direction.vertical,
+                      offset: -0.5,
+                      child: Column(children: [
+                        ListTile(
+                          title: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            child: Text(text)),
+                          subtitle: Text(description),
+                        ),
+                      ]))
                 ],
               );
             },
@@ -130,6 +153,7 @@ class _CatalogueState extends State<Catalogue> with TickerProviderStateMixin {
   }
 }
 
+class ShowUpList {}
 
 class Product {
   final String name;
